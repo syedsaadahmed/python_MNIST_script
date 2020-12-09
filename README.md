@@ -7,7 +7,7 @@ A small python project for learning and producing results from MNIST data set. D
 
 Get it from here: https://docs.docker.com/get-docker/
 
-## Execution
+# Execution
 
 **First of all pull the Docker image from Dockerhub**
 ```
