@@ -1,6 +1,5 @@
 # PYTHON MNIST DATASET BASED PROJECT
-A small python project for learning and producing results from MNIST data set
-
+A small python project for learning and producing results from MNIST data set. Developing a Convolutional Neural Network From Scratch for MNIST Handwritten Digit Classification.
 
 # Pre-requisites
 
