@@ -21,7 +21,7 @@ cd /path to git repo/
 
 **Thirdly create the container from that Image, It contains all the dependencies for the script to execute**
 ```
-docker run -itd -v ${pwd}:/machine_learning_project [image_id] bash
+docker run -itd -v $(pwd):/machine_learning_project [image_id] bash
 ```
 
 **Get inside the container that is being created using the container ID**
