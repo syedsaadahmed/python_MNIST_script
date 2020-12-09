@@ -10,12 +10,12 @@ Get it from here: https://docs.docker.com/get-docker/
 
 ## Execution
 
-**First of all pull the Docker image from Dockerhub **
+**First of all pull the Docker image from Dockerhub**
 ```
 docker pull
 ```
 
-**Second, create the container from that Image, It contains all the dependencies for the script to execute **
+**Second, create the container from that Image, It contains all the dependencies for the script to execute**
 ```
 docker run -itd -v ${pwd}:/machine_learning_project [image_id] bash
 ```
