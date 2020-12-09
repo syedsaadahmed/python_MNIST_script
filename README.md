@@ -12,7 +12,7 @@ Get it from here: https://docs.docker.com/get-docker/
 
 **First of all pull the Docker image from Dockerhub**
 ```
-docker pull
+docker pull syedsaadahmed2094/machine_learning_image:v1
 ```
 
 **Second, Move to the directory where you have clone the GIT repository.**
