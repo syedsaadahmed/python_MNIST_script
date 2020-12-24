@@ -33,3 +33,7 @@ docker attach [container ID]
 ```
 cd /machine_learning_project
 ```
+
+**Help taken for**
+
+https://machinelearningmastery.com/how-to-develop-a-convolutional-neural-network-from-scratch-for-mnist-handwritten-digit-classification/
