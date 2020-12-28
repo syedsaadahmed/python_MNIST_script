@@ -33,7 +33,6 @@ class NeuralNetwork:
         
         self.goalOutput = 0.0 # set goalOutput # will be input by user
         
-        
         # Distribution percentages
         self.PL1_N1 = 0.688 # % to distribut main output (L1) to newron_1 (N1) of prev layer 
         self.PL1_N2 = 0.312 # % to distribut main output (L1) to newron_2 (N2) of prev layer
@@ -114,11 +113,12 @@ class NeuralNetwork:
 
     ## Back-propagation for Taylor Decomposition and Find new Input Values
     def back_prop(self):
+        print(" *** Applying Tylor Decomposition *** \n")
         self.out_hidden_1_new = self.out_hidden_1 - (((self.output-self.goalOutput)*self.PL1_N1) / (self.goalOutput * (1-self.goalOutput) * self.weight_l21))        
         self.out_hidden_2_new = self.out_hidden_2 - (((self.output-self.goalOutput)*self.PL1_N2) / (self.goalOutput * (1-self.goalOutput) * self.weight_l22))
                 
         if(self.out_hidden_1<0 or self.out_hidden_2<0):
-            return false
+            return False
         else:
             X_new_a = self.X - (((self.out_hidden_1 - self.out_hidden_1_new) * self.PN1_I1) / (self.weight_11))
             y_new_a = self.y - (((self.out_hidden_1 - self.out_hidden_1_new) * self.PN1_I2) / (self.weight_21))
@@ -132,7 +132,7 @@ class NeuralNetwork:
             self.y_new = y_new_a + y_new_b
             self.z_new = z_new_a + z_new_b
 
-            return true
+            return True
         
 # Sigmoid Function
 def sigmoid(s):
@@ -146,17 +146,14 @@ def execute_nn(X, y, z, goalOutput):
     nn = NeuralNetwork() # Instantiate neural network
     nn.set_sample(X, y, z, goalOutput) # set input values
     
-    isDecomposable = nn.feed_forward() # perform feed-forward to calculate output        
+    nn.feed_forward() # perform feed-forward to calculate output        
     print("\nFinal Output: "+ str(round(nn.output,3)) + "\n")
     
-    if(isDecomposable):
-        print(" *** Applying Tylor Decomposition *** \n")
-        nn.back_prop()
-
+    isDecomposable = nn.back_prop()
+    
+    if(isDecomposable):        
         print("New Value of Hidden Neuron 1: "+ str(round(nn.out_hidden_1_new,3)))
         print("New Value of Hidden Neuron 2: "+ str(round(nn.out_hidden_2_new,3)) + "\n")
-    #     print("New Value of Hidden Neuron 2: "+ str(round(nn.out_hidden_2_new,3)) + "\n")
-    
         print("New first Input: "+ str(round(nn.X_new,3)))
         print("New 2nd Input: "+ str(round(nn.y_new,3)))
         print("New 3rd Input: "+ str(round(nn.z_new,3)))
@@ -166,10 +163,3 @@ def execute_nn(X, y, z, goalOutput):
 print(" *** Initial Input values *** \n 0.7, \n 0.1, \n 0.4 \n")
 execute_nn(0.7,0.1, 0.4, 0.65)
 # execute_nn(-0.448,-0.423, 0.062, 0.65)
-
-
-# In[ ]:
-
-
-
-
