@@ -152,6 +152,7 @@ def execute_nn(X, y, z, goalOutput):
     nn = NeuralNetwork() # Instantiate neural network
     print(" *** Feed Forward *** \n")
     nn.set_sample(X, y, z, goalOutput) # set input values
+    nn.setDistributionPercentages(0.688,0.312) # 0.688,0.312
     nn.feed_forward() # perform feed-forward to calculate output        
     print("\nFinal Output: "+ str(round(nn.output,3)) + "\n")
     
@@ -169,5 +170,5 @@ def execute_nn(X, y, z, goalOutput):
     print(nn.result.to_string())
 
 # print("Initial Input values \t 0.7, \t 0.1, \t 0.4 \t")
-execute_nn(0.7,0.1, 0.4, 0.92)
+execute_nn(0.7,0.1, 0.4, 0.65)
 # execute_nn(-0.448,-0.423, 0.062, 0.65)
