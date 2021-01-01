@@ -1,22 +1,27 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+from numpy.random import randint
 
 # # Input data
 X = np.array([0.0,0.0,0.0])
 
 class NeuralNetwork:
     def __init__(self):
+        self.result = pd.DataFrame(columns=['Inputs', 'P1', 'P2' , 'Inputs_New', 'Difference'])
 
         # These are members of the class. We can access them in every method by \"self.var_name\" 
         #and from outside the class with \"instance_name.var_name\"
 
         self.inputs = {"X": 0.0, "y": 0.0, "z": 0.0} # input # will be input by user 
-        self.inputs_new = {"X": 0.0, "y": 0.0, "z": 0.0} # new input # will be calculated         
+        self.inputs_new = {"X": 0.0, "y": 0.0, "z": 0.0} # new input # will be calculated
+        self.inputs_diff = {"X": 0.0, "y": 0.0, "z": 0.0} # difference # will be calculated
+
         self.goalOutput = 0.0 # set goalOutput # will be input by user
         
         # Neuron Backward Distribution percentages
-        self.PL1_N1 = 0.688 # % to distribut main output (L1) to newron_1 (N1) of prev layer 
-        self.PL1_N2 = 0.312 # % to distribut main output (L1) to newron_2 (N2) of prev layer
+        self.PL1_N1 = 0.0 # % to distribut main output (L1) to newron_1 (N1) of prev layer 
+        self.PL1_N2 = 0.0 # % to distribut main output (L1) to newron_2 (N2) of prev layer
         
         self.PN1_I1 = 0.366 # % to distribut newron_1 to Input 1 
         self.PN1_I2 = 0.282 # % to distribut newron_1 to Input 2
@@ -70,6 +75,10 @@ class NeuralNetwork:
         self.inputs["z"] = float(z)
         self.goalOutput = float(goalOutput)
 
+    def setDistributionPercentages(self, p1, p2):
+        self.PL1_N1 = round(float(p1),3) # % to distribut main output (L1) to newron_1 (N1) of prev layer 
+        self.PL1_N2 = round(float(p2),3) # % to distribut main output (L1) to newron_2 (N2) of prev layer
+
     ## Feed-forward pass
     def feed_forward(self):
         net_hidden_11 = (self.inputs["X"] * self.weight_11) + self.bias_11
@@ -87,17 +96,20 @@ class NeuralNetwork:
         net_out_1 = (self.out_hidden_1  * self.weight_l21) + self.bias_l21
         net_out_2 = (self.out_hidden_2  * self.weight_l22) + self.bias_l22
         
-        self.output = sigmoid(net_out_1+net_out_2) #sigmoid function // Predicted Output
+        self.output = round(sigmoid(net_out_1+net_out_2),3) #sigmoid function // Predicted Output
 
     ## Back-propagation for Taylor Decomposition and Find new Input Values
     def back_prop(self):
-        print(" *** Applying Tylor Decomposition *** \n")
         self.out_hidden_1_new = self.out_hidden_1 - (((self.output-self.goalOutput)*self.PL1_N1) / (self.goalOutput * (1-self.goalOutput) * self.weight_l21))        
         self.out_hidden_2_new = self.out_hidden_2 - (((self.output-self.goalOutput)*self.PL1_N2) / (self.goalOutput * (1-self.goalOutput) * self.weight_l22))
                 
         if(self.out_hidden_1<0 or self.out_hidden_2<0):
+            print("-ve values encountered for ReLU. Please select different % Distributions")
+            self.result = self.result.append({'Inputs': self.inputs.values(), 'P1': str(self.PL1_N1) + "%", 'P2': str(self.PL1_N2)+ "%", 'Inputs_New': "x x x", 'Difference': "x x x"}, ignore_index=True)
+#             row = [self.inputs.values(), str(self.PL1_N1) + "%", str(self.PL1_N2)+ "%", listToString(["x","x","x"]), listToString(["x","x","x"])]
+#             self.result.loc[len(self.result)] = row
             return False
-        else:            
+        else:
             X_new_a = self.inputs["X"] - (((self.out_hidden_1 - self.out_hidden_1_new) * self.PN1_I1) / (self.weight_11))
             y_new_a = self.inputs["y"] - (((self.out_hidden_1 - self.out_hidden_1_new) * self.PN1_I2) / (self.weight_21))
             z_new_a = self.inputs["z"] - (((self.out_hidden_1 - self.out_hidden_1_new) * self.PN1_I3) / (self.weight_31))
@@ -106,11 +118,25 @@ class NeuralNetwork:
             y_new_b = self.inputs["y"] - (((self.out_hidden_2 - self.out_hidden_2_new) * self.PN2_I2) / (self.weight_22))
             z_new_b = self.inputs["z"] - (((self.out_hidden_2 - self.out_hidden_2_new) * self.PN2_I3) / (self.weight_32))
 
-            self.inputs_new["X"] = X_new_a + X_new_b 
-            self.inputs_new["y"] = y_new_a + y_new_b
-            self.inputs_new["z"] = z_new_a + z_new_b
+            self.inputs_new["X"] = round(X_new_a + X_new_b,3)
+            self.inputs_new["y"] = round(y_new_a + y_new_b,3)
+            self.inputs_new["z"] = round(z_new_a + z_new_b,3)
+
+            self.inputs_diff["X"] = round(self.inputs["X"] - self.inputs_new["X"],3)
+            self.inputs_diff["y"] = round(self.inputs["y"] - self.inputs_new["y"],3)
+            self.inputs_diff["z"] = round(self.inputs["z"] - self.inputs_new["z"],3)
+            
+            self.result = self.result.append({'Inputs': self.inputs.values(), 'P1': str(self.PL1_N1) + "%", 'P2': str(self.PL1_N2)+ "%", 'Inputs_New': listToString(self.inputs_new.values()), 'Difference': listToString(self.inputs_diff.values())}, ignore_index=True)            
+#             row = [self.inputs.values(), str(self.PL1_N1) + "%", str(self.PL1_N2)+ "%", listToString(self.inputs_new.values()), listToString(self.inputs_diff.values())]
+#             self.result.loc[len(self.result)] = row
             return True
-        
+
+def listToString(s):
+    str1 = " "
+    for ele in s:  
+        str1 += str(ele) + " " 
+    return str1 
+
 # Sigmoid Function
 def sigmoid(s):
     return (1/(1+np.exp(-s)))
@@ -121,21 +147,24 @@ def ReLu(s):
 
 def execute_nn(X, y, z, goalOutput):
     nn = NeuralNetwork() # Instantiate neural network
+    print(" *** Feed Forward *** \n")
     nn.set_sample(X, y, z, goalOutput) # set input values
     nn.feed_forward() # perform feed-forward to calculate output        
     print("\nFinal Output: "+ str(round(nn.output,3)) + "\n")
     
-    isDecomposable = nn.back_prop()
+    print(" *** Applying Tylor Decomposition *** Turn " + str(nn.output) + " into " + str(nn.goalOutput) +" \n")
     
-    if(isDecomposable):        
-        print("New Value of Hidden Neuron 1: "+ str(round(nn.out_hidden_1_new,3)))
-        print("New Value of Hidden Neuron 2: "+ str(round(nn.out_hidden_2_new,3)) + "\n")
-        print("New first Input: "+ str(round(nn.inputs_new["X"],3)))
-        print("New 2nd Input: "+ str(round(nn.inputs_new["y"],3)))
-        print("New 3rd Input: "+ str(round(nn.inputs_new["z"],3)))
-    else:
-        print("-ve values encountered for ReLU. Please select different % Distributions")
+    P1=0.99
+    P2=0.01
+    
+    for x in range(99):
+        nn.setDistributionPercentages(P1,P2) # 0.688,0.312 # % to distribut main output (L1) to newrons of prev layer
+        isDecomposable = nn.back_prop()
 
-print(" *** Initial Input values *** \n 0.7, \n 0.1, \n 0.4 \n")
+        P1=P1 - 0.01
+        P2=P2 + 0.01
+    print(nn.result.to_string())
+
+# print("Initial Input values \t 0.7, \t 0.1, \t 0.4 \t")
 execute_nn(0.7,0.1, 0.4, 0.65)
 # execute_nn(-0.448,-0.423, 0.062, 0.65)
