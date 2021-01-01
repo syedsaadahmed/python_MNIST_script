@@ -7,8 +7,8 @@ X = np.array([0.0,0.0,0.0])
 
 class NeuralNetwork:
     def __init__(self):
-        self.result = pd.DataFrame(columns=['Inputs', 'P1', 'P2' , 'Inputs_New', 'Difference'])
-
+        self.result = pd.DataFrame(columns=['Inputs', 'P1', 'P2' , 'Inputs_New', 'Difference', "Euc_Distance"])
+        self.distance = 0.0
         # These are members of the class. We can access them in every method by \"self.var_name\" 
         #and from outside the class with \"instance_name.var_name\"
 
@@ -104,7 +104,7 @@ class NeuralNetwork:
                 
         if(self.out_hidden_1<0 or self.out_hidden_2<0):
             print("-ve values encountered for ReLU. Please select different % Distributions")
-            self.result = self.result.append({'Inputs': self.inputs.values(), 'P1': str(self.PL1_N1) + "%", 'P2': str(self.PL1_N2)+ "%", 'Inputs_New': "x x x", 'Difference': "x x x"}, ignore_index=True)
+            self.result = self.result.append({'Inputs': self.inputs.values(), 'P1': str(self.PL1_N1) + "%", 'P2': str(self.PL1_N2)+ "%", 'Inputs_New': "x x x", 'Difference': "x x x", "Euc_Distance" : "N/A"}, ignore_index=True)
 #             row = [self.inputs.values(), str(self.PL1_N1) + "%", str(self.PL1_N2)+ "%", listToString(["x","x","x"]), listToString(["x","x","x"])]
 #             self.result.loc[len(self.result)] = row
             return False
@@ -124,8 +124,12 @@ class NeuralNetwork:
             self.inputs_diff["X"] = round(self.inputs["X"] - self.inputs_new["X"],3)
             self.inputs_diff["y"] = round(self.inputs["y"] - self.inputs_new["y"],3)
             self.inputs_diff["z"] = round(self.inputs["z"] - self.inputs_new["z"],3)
-            
-            self.result = self.result.append({'Inputs': self.inputs.values(), 'P1': str(self.PL1_N1) + "%", 'P2': str(self.PL1_N2)+ "%", 'Inputs_New': listToString(self.inputs_new.values()), 'Difference': listToString(self.inputs_diff.values())}, ignore_index=True)            
+
+            point1 = np.fromiter(self.inputs.values(), dtype=float)
+            point2 = np.fromiter(self.inputs_new.values(), dtype=float)
+
+            self.distance = np.linalg.norm(point1 - point2)
+            self.result = self.result.append({'Inputs': self.inputs.values(), 'P1': str(self.PL1_N1) + "%", 'P2': str(self.PL1_N2)+ "%", 'Inputs_New': listToString(self.inputs_new.values()), 'Difference': listToString(self.inputs_diff.values()),"Euc_Distance" : self.distance}, ignore_index=True)            
 #             row = [self.inputs.values(), str(self.PL1_N1) + "%", str(self.PL1_N2)+ "%", listToString(self.inputs_new.values()), listToString(self.inputs_diff.values())]
 #             self.result.loc[len(self.result)] = row
             return True
@@ -165,5 +169,5 @@ def execute_nn(X, y, z, goalOutput):
     print(nn.result.to_string())
 
 # print("Initial Input values \t 0.7, \t 0.1, \t 0.4 \t")
-execute_nn(0.7,0.1, 0.4, 0.65)
+execute_nn(0.7,0.1, 0.4, 0.92)
 # execute_nn(-0.448,-0.423, 0.062, 0.65)
