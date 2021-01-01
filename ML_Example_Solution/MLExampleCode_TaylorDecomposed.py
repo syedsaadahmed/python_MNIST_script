@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from numpy.random import randint
 
 # # Input data
 X = np.array([0.0,0.0,0.0])
