@@ -1,6 +1,11 @@
-FROM ubuntu:18.04
+FROM tensorflow/tensorflow:latest
 
 MAINTAINER "Syed Saad Ahmed"
+
+RUN pip uninstall tensorflow -y && pip install tensorflow==1.5
+
+RUN pip install matplotlib && pip install sklearn && pip install keras==keras==2.1.5
+
 
 apt update
 apt install software-properties-common
